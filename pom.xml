@@ -68,7 +68,7 @@
                         </excludes>
                     </configuration>
                 </plugin>
-            </plugins>
+            </plugins><artifactId>lombok</artifactId>
         </pluginManagement>
     </build>
 </project>

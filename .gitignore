@@ -1,0 +1,18 @@
+# Java build files
+**/target/
+*.class
+
+# IDE files
+.project
+.classpath
+.settings/
+.idea/
+.vscode/
+
+# Logs
+*.log
+
+# Environment secrets
+.env
+.env.*
+!.env.example
