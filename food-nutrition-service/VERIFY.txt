@@ -1,0 +1,10 @@
+food-nutrition-service (port 8082, database food_db)
+
+1. In STS: File > Import > Existing Maven Projects > select the food-supply-nutrition root folder (or just this module).
+   Make sure the parent pom.xml already lists <module>food-nutrition-service</module>.
+2. Boot Dashboard > start FoodNutritionServiceApplication. Stop any old run on 8082 first.
+3. Open http://localhost:8082/swagger-ui.html
+   - GET /api/v1/food-items?size=50  -> 32 seeded items
+   - GET /api/v1/food-items/by-ids?ids=1,2
+   - POST /api/v1/meal-calculations  {"persons":500,"days":7,"items":[{"foodItemId":1,"quantityPerPerson":0.15}]}
+     -> totalQuantity 525.000, 517.50 kcal per person per day

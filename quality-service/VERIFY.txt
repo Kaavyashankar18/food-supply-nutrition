@@ -1,0 +1,21 @@
+quality-service (port 8087, database quality_db)
+
+1. Put this folder next to beneficiary-service, inside the inner food-supply-nutrition folder.
+   In STS: Maven > Update Project (Force Update).
+2. Start inventory-service (8084) first, then quality-service from the Boot Dashboard.
+   Console should log "Seeded quality data: 9 inspections, 8 wastage records, 6 corrective actions".
+3. Open http://localhost:8087/swagger-ui.html
+   - GET /api/v1/inspections        -> 9 inspections
+   - GET /api/v1/wastage            -> 8 records
+   - GET /api/v1/corrective-actions -> 6 actions (GET ?overdue=true shows 1)
+   - GET /api/v1/quality/summary and GET /api/v1/wastage/summary
+4. Demo (needs inventory-service running; use a real batch id from
+   http://localhost:8084/api/v1/batches):
+   - POST /api/v1/inspections {"batchId":<id>,"inspector":"Meena Krishnan","result":"FAIL",
+     "qualityStatus":"QUARANTINED","remarks":"Off smell"}
+     -> 201, and GET http://localhost:8084/api/v1/batches/<id> shows QUARANTINED.
+   - POST /api/v1/wastage {"batchId":<id>,"quantity":5,"reason":"SPOILED","recordedBy":"Store Manager",
+     "disposalMethod":"Composting"} -> 201, on-hand stock of that batch drops by 5.
+   - POST /api/v1/corrective-actions {"wastageId":<new wastage id>,"description":"Review storage",
+     "assignedTo":"Store Manager","dueDate":"<date>"} -> 201.
+   Stop inventory-service and repeat the POST: 503 and nothing is saved.

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/layout :: shell(${title}, ${active}, ~{::section})}">
+<body>
+<section>
+    <div class="mb-2" th:if="${backUrl != null}"><a th:href="@{${backUrl}}">&laquo; Back</a></div>
+    <h3 th:text="${title}">Title</h3>
+
+    <div class="alert alert-danger" th:if="${formError}" th:text="${formError}"></div>
+
+    <form th:action="@{${formAction}}" method="post" style="max-width: 820px;">
+        <div class="row g-3">
+            <th:block th:each="f : ${fields}">
+                <input type="hidden" th:if="${f.type() == 'hidden'}" th:name="${f.name()}" th:value="${f.value()}">
+                <div class="col-md-6" th:if="${f.type() != 'hidden'}">
+                    <label class="form-label" th:text="${f.label()}">Label</label>
+                    <select class="form-select" th:if="${f.type() == 'select'}" th:name="${f.name()}" th:required="${f.required()}">
+                        <option th:each="o : ${f.options()}" th:value="${o.value()}" th:text="${o.label()}"
+                                th:selected="${o.value() == f.value()}"></option>
+                    </select>
+                    <textarea class="form-control" rows="3" th:if="${f.type() == 'textarea'}" th:name="${f.name()}"
+                              th:text="${f.value()}" th:required="${f.required()}"></textarea>
+                    <input class="form-control" th:if="${f.type() != 'select' and f.type() != 'textarea'}"
+                           th:type="${f.type()}" th:name="${f.name()}" th:value="${f.value()}"
+                           th:required="${f.required()}" th:attr="step=${f.type() == 'number'} ? 'any' : null"
+                           th:placeholder="${f.hint()}">
+                </div>
+            </th:block>
+        </div>
+        <div class="mt-3">
+            <button class="btn btn-primary" type="submit" th:text="${submitLabel}">Save</button>
+            <a class="btn btn-link" th:if="${backUrl != null}" th:href="@{${backUrl}}">Cancel</a>
+        </div>
+    </form>
+</section>
+</body>
+</html>

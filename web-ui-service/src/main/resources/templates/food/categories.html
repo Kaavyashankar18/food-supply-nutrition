@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/layout :: shell('Food categories', 'food', ~{::section})}">
+<body>
+<section>
+    <div class="mb-2"><a th:href="@{/food}">&laquo; Food items</a></div>
+    <h3>Food categories</h3>
+
+    <form class="row g-2 mb-3" method="post" th:action="@{/food/categories}" style="max-width: 420px;">
+        <div class="col">
+            <input class="form-control form-control-sm" name="name" placeholder="New category name" required>
+        </div>
+        <div class="col-auto">
+            <button class="btn btn-sm btn-primary" type="submit">Add</button>
+        </div>
+    </form>
+
+    <table class="table table-sm table-bordered w-auto align-middle">
+        <thead><tr><th>ID</th><th>Name</th><th>Items</th><th></th></tr></thead>
+        <tbody>
+        <tr th:each="r : ${rows}">
+            <td th:text="${r['id']}"></td>
+            <td th:text="${r['name']}"></td>
+            <td th:text="${r['itemCount']}"></td>
+            <td>
+                <form th:action="@{/food/categories/{id}/delete(id=${r['id']})}" method="post" class="m-0"
+                      onsubmit="return confirm('Delete this category?');">
+                    <button class="btn btn-sm btn-outline-danger py-0" type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</section>
+</body>
+</html>

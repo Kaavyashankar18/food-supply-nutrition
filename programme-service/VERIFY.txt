@@ -1,0 +1,8 @@
+programme-service (port 8086, DB programme_db)
+1. Unzip so programme-service\ sits next to beneficiary-service\ (inside the inner food-supply-nutrition folder). STS: Maven > Update Project (Force Update).
+2. Start beneficiary-service (8081), food-nutrition-service (8082) and inventory-service (8084) FIRST, then programme-service from the Boot Dashboard.
+   Console must show "Seeded programme data". If it says "seeding skipped", start the others and restart (tables are empty so it retries).
+3. http://localhost:8086/swagger-ui.html -> GET /api/v1/programmes (3 programmes), GET /api/v1/programmes/1/meal-plans (7 plans),
+   GET /api/v1/programmes/1/participants (the school, peopleCovered 500).
+4. GET /api/v1/programmes/1/requirements (leave from/to empty) -> totals for the week, shortages (Toor Dal, Egg, ...), nutrition vs STUDENT requirement.
+Tests: mvn test (or STS Run As > JUnit).

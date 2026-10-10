@@ -1,0 +1,17 @@
+reporting-service  (port 8088, no database)
+
+Setup
+1. Unzip so reporting-service\ sits next to beneficiary-service\ inside the inner food-supply-nutrition folder.
+2. STS: right-click the project > Maven > Update Project (Force Update).
+3. Start the other services first (beneficiary 8081, food-nutrition 8082, inventory 8084, procurement 8083,
+   programme 8086, quality 8087, distribution 8085), then reporting-service from the Boot Dashboard.
+   If a service is stopped, reports still work and list it under "unavailable".
+
+Verify (Swagger: http://localhost:8088/swagger-ui.html)
+1. GET /api/v1/reports/services/status -> every service "up": true. A "up": false with a message such as
+   "returned HTTP 404 for /api/..." means a summary URL differs from what this service expects: tell me which.
+2. GET /api/v1/reports/dashboard -> "cards" filled (peopleServed, usableStockKg, lowStockItems, expiringBatches,
+   pendingProcurementRequests, pendingDistributions, activeProgrammes, wastageKg ...) and "unavailable": [].
+3. GET /api/v1/reports/shortage?programmeId=1 -> Toor Dal and Egg rows (PROGRAMME_SHORTAGE) plus LOW_STOCK rows.
+   Add &format=csv to download a CSV file (Content-Disposition attachment). Stop inventory-service and repeat:
+   you get partial data and "unavailable": ["inventory-service"] (HTTP 200), not an error.

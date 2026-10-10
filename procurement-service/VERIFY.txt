@@ -1,0 +1,28 @@
+procurement-service  (port 8083, database procurement_db)
+=========================================================
+Prerequisites: PostgreSQL running; DB procurement_db exists (user foodapp / foodapp123).
+For the full flow also start: food-nutrition-service (8082) and inventory-service (8084).
+
+1. Copy folder procurement-service\ next to beneficiary-service\ (inside the inner food-supply-nutrition folder).
+2. STS: right click the root project > Maven > Update Project (Force Update), tick all modules.
+3. Boot Dashboard > start procurement-service. Console: "Seeded procurement-service: 6 suppliers, 7 requests, 3 purchase orders".
+4. Swagger: http://localhost:8083/swagger-ui.html
+
+Checks
+- GET /api/v1/suppliers -> 6 suppliers;  GET /api/v1/procurement/summary -> counts by status.
+- POST /api/v1/procurement-requests  {"requestedBy":"store.manager","reason":"Toor dal shortage","submit":true,
+    "items":[{"foodItemId":5,"quantity":60,"estimatedUnitPrice":110}]}
+    -> 201, name "Toor Dal" and unit KG resolved from food-nutrition-service (service 8082 must be running).
+- POST /{id}/approve -> APPROVED; POST /api/v1/purchase-orders {"requestId":<id>,"supplierId":2,"expectedDeliveryDate":"<future date>"}
+    -> PO created, request ORDERED.
+- POST /api/v1/purchase-orders/{poId}/receive {"items":[{"itemId":<po item id>,"quantityReceived":60,
+    "batchNumber":"TD-2026-001","expiryDate":"2027-06-30","storageLocation":"Warehouse A"}]}
+    -> PO RECEIVED, request COMPLETED; inventory-service GET /api/v1/stock/5 shows the new batch.
+
+Endpoints
+  /api/v1/suppliers (+ PATCH /{id}/status?value=)
+  /api/v1/procurement-requests (+ POST /{id}/submit | /approve | /reject?reason=)
+  /api/v1/purchase-orders (+ POST /{id}/receive, PATCH /{id}/status?value=SENT|CANCELLED)
+  /api/v1/procurement/summary
+
+If table structure ever changes: drop and recreate procurement_db in pgAdmin, then restart.

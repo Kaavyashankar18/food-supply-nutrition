@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/layout :: shell('Beneficiaries', 'beneficiary', ~{::section})}">
+<body>
+<section>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="mb-0">Beneficiaries</h3>
+        <a class="btn btn-primary btn-sm" th:href="@{/beneficiary/new}">Add beneficiary</a>
+    </div>
+
+    <form class="row g-2 mb-3" method="get" th:action="@{/beneficiary}">
+        <div class="col-md-3">
+            <input class="form-control form-control-sm" name="q" th:value="${q}" placeholder="Search by name">
+        </div>
+        <div class="col-md-2">
+            <select class="form-select form-select-sm" name="category">
+                <option value="">All categories</option>
+                <option th:each="c : ${categories}" th:value="${c}" th:text="${c}" th:selected="${c == category}"></option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select class="form-select form-select-sm" name="type">
+                <option value="">All types</option>
+                <option th:each="t : ${types}" th:value="${t}" th:text="${t}" th:selected="${t == type}"></option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select class="form-select form-select-sm" name="status">
+                <option value="">Any status</option>
+                <option value="ACTIVE" th:selected="${status == 'ACTIVE'}">ACTIVE</option>
+                <option value="INACTIVE" th:selected="${status == 'INACTIVE'}">INACTIVE</option>
+            </select>
+        </div>
+        <div class="col-auto">
+            <button class="btn btn-sm btn-secondary" type="submit">Filter</button>
+            <a class="btn btn-sm btn-link" th:href="@{/beneficiary}">Clear</a>
+        </div>
+    </form>
+
+    <div class="table-responsive">
+        <table class="table table-sm table-bordered align-middle">
+            <thead>
+            <tr>
+                <th>ID</th><th>Name</th><th>Type</th><th>Category</th><th>People</th>
+                <th>Status</th><th>Eligible</th><th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="r : ${rows}">
+                <td th:text="${r['id']}"></td>
+                <td th:text="${r['fullName']}"></td>
+                <td th:text="${r['type']}"></td>
+                <td th:text="${r['category']}"></td>
+                <td th:text="${r['peopleServed']}"></td>
+                <td th:text="${r['status']}"></td>
+                <td th:text="${r['eligible'] == true} ? 'Yes' : 'No'"></td>
+                <td><a th:href="@{/beneficiary/{id}(id=${r['id']})}">Open</a></td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(rows)}"><td colspan="8" class="text-center text-muted">Nothing found.</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div th:replace="~{layout/fragments :: pager(${page}, ${base})}"></div>
+</section>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/layout :: shell(${title}, ${active}, ~{::section})}">
+<body>
+<section>
+    <div class="mb-2">&laquo; <a th:href="@{/reports}">All reports</a></div>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="mb-0" th:text="${title}">Report</h3>
+        <a class="btn btn-sm btn-outline-secondary" th:href="@{${csvUrl}}">Download CSV</a>
+    </div>
+
+    <div class="alert alert-warning" th:if="${!unavailable.isEmpty()}">
+        Some services did not answer, so this report is incomplete:
+        <strong th:text="${#strings.listJoin(unavailable, ', ')}"></strong>
+    </div>
+
+    <form class="row g-2 mb-3" method="get" th:action="@{'/reports/' + ${type}}">
+        <div class="col-md-2"><input class="form-control form-control-sm" type="date" name="from" th:value="${from}" title="From"></div>
+        <div class="col-md-2"><input class="form-control form-control-sm" type="date" name="to" th:value="${to}" title="To"></div>
+        <div class="col-md-2"><input class="form-control form-control-sm" name="foodItemId" th:value="${foodItemId}" placeholder="Food item id"></div>
+        <div class="col-md-2"><input class="form-control form-control-sm" name="programmeId" th:value="${programmeId}" placeholder="Programme id"></div>
+        <div class="col-md-2" th:if="${type == 'expiry'}"><input class="form-control form-control-sm" name="days" th:value="${days}" placeholder="Days"></div>
+        <div class="col-auto">
+            <button class="btn btn-sm btn-secondary" type="submit">Run report</button>
+        </div>
+    </form>
+
+    <div th:each="s : ${sections}" class="mb-4">
+        <h6 class="text-uppercase text-muted" th:text="${s.title()}">Section</h6>
+        <table class="table table-sm table-bordered bg-white w-auto" th:if="${s.pairs() != null}">
+            <tbody><tr th:each="p : ${s.pairs()}"><th th:text="${@ui.pretty(p[0])}">Label</th><td th:text="${p[1]}"></td></tr></tbody>
+        </table>
+        <div class="table-responsive" th:if="${s.columns() != null}">
+            <table class="table table-sm table-bordered bg-white align-middle">
+                <thead><tr><th th:each="c : ${s.columns()}" th:text="${@ui.pretty(c)}">Col</th></tr></thead>
+                <tbody>
+                <tr th:each="row : ${s.rows()}"><td th:each="x : ${row}" th:text="${x}"></td></tr>
+                <tr th:if="${#lists.isEmpty(s.rows())}"><td th:colspan="${#lists.size(s.columns()) + 1}" class="text-muted text-center">No data for these filters.</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+</body>
+</html>

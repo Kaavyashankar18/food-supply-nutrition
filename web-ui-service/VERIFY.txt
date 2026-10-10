@@ -1,0 +1,10 @@
+web-ui-service (complete: core, security, masters, operations, quality, reports, demo page)
+
+1. Put web-ui-service next to beneficiary-service (inside the folder with the parent pom.xml).
+   Put start-all.bat and README.md in that same parent folder.
+2. STS: Maven > Update Project (Force Update). users_db must exist.
+3. Start every other service first (see README), then web-ui-service. Console logs "Seeded 4 users" on first run.
+4. Open http://localhost:8080 and log in as admin / admin123.
+5. Click through: Dashboard, Beneficiaries, Food items, Programmes, Inventory (4 tabs), Procurement (3 tabs),
+   Distribution, Quality and wastage, Reports (try Download CSV), Demo walkthrough.
+6. Log in as field / field123: Procurement, Inventory, Quality and Reports are hidden; typing /quality gives Access denied.

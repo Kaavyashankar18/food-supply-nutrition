@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/layout :: shell('Dashboard', 'dashboard', ~{::section})}">
+<body>
+<section>
+    <h3 class="mb-3">Dashboard</h3>
+
+    <div th:if="${problem}" class="alert alert-danger">
+        Dashboard data could not be loaded: <span th:text="${problem}"></span>
+    </div>
+    <div th:if="${!unavailable.isEmpty()}" class="alert alert-warning">
+        Some services did not answer: <strong th:text="${#strings.listJoin(unavailable, ', ')}"></strong>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-4 col-xl-3" th:each="c : ${cards}">
+            <div class="box h-100">
+                <div class="num" th:text="${c.value}">0</div>
+                <div class="lbl" th:text="${c.label}">Label</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-md-6 col-xl-4" th:each="ch : ${charts}">
+            <div class="box h-100">
+                <div class="fw-semibold mb-2" th:text="${ch.title}">Chart</div>
+                <div class="chart-box"><canvas th:id="${ch.id}"></canvas></div>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        window.addEventListener('load', function () {
+            var charts = JSON.parse(/*[[${chartsJson}]]*/ '[]');
+            var colors = ['#3b6ea5', '#6a994e', '#d08c2f', '#b5524a', '#7b6aa8', '#4f9aa0', '#a0627a', '#8a9a3b'];
+            charts.forEach(function (c) {
+                var el = document.getElementById(c.id);
+                if (!el) { return; }
+                var isBar = c.type === 'bar';
+                new Chart(el, {
+                    type: c.type,
+                    data: {
+                        labels: c.labels,
+                        datasets: [{
+                            data: c.values,
+                            backgroundColor: isBar ? '#3b6ea5' : c.labels.map(function (l, i) { return colors[i % colors.length]; })
+                        }]
+                    },
+                    options: {
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: !isBar, position: 'bottom' } },
+                        scales: isBar ? { y: { beginAtZero: true } } : {}
+                    }
+                });
+            });
+        });
+    </script>
+</section>
+</body>
+</html>

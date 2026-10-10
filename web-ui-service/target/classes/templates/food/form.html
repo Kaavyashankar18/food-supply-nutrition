@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/layout :: shell('Food item form', 'food', ~{::section})}">
+<body>
+<section>
+    <div class="mb-2"><a th:href="@{/food}">&laquo; All food items</a></div>
+    <h3 th:text="${f['id'] == null} ? 'New food item' : 'Edit food item'">Food item</h3>
+
+    <div class="alert alert-danger" th:if="${formError}" th:text="${formError}"></div>
+
+    <form th:action="@{/food/save}" method="post" style="max-width: 760px;">
+        <input type="hidden" name="id" th:value="${f['id']}">
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label">Name</label>
+                <input class="form-control" name="name" th:value="${f['name']}" required>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Category</label>
+                <select class="form-select" name="categoryId">
+                    <option th:each="c : ${categories}" th:value="${c['id']}" th:text="${c['name']}"
+                            th:selected="${f['categoryId'] != null and f['categoryId'].toString() == c['id'].toString()}"></option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Unit</label>
+                <select class="form-select" name="unit">
+                    <option th:each="u : ${units}" th:value="${u}" th:text="${u}" th:selected="${u == f['unit']}"></option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Grams per unit</label>
+                <input class="form-control" name="gramsPerUnit" th:value="${f['gramsPerUnit']}" placeholder="for pieces, e.g. 50">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Recommended per person per day</label>
+                <input class="form-control" name="recommendedQtyPerPersonPerDay" th:value="${f['recommendedQtyPerPersonPerDay']}">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Calories per 100 g</label>
+                <input class="form-control" name="caloriesPer100g" th:value="${f['caloriesPer100g']}">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Protein per 100 g</label>
+                <input class="form-control" name="proteinPer100g" th:value="${f['proteinPer100g']}">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Carbs per 100 g</label>
+                <input class="form-control" name="carbsPer100g" th:value="${f['carbsPer100g']}">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Fat per 100 g</label>
+                <input class="form-control" name="fatPer100g" th:value="${f['fatPer100g']}">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Fibre per 100 g</label>
+                <input class="form-control" name="fibrePer100g" th:value="${f['fibrePer100g']}">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Allergens</label>
+                <input class="form-control" name="allergens" th:value="${f['allergens']}">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Storage requirement</label>
+                <input class="form-control" name="storageRequirement" th:value="${f['storageRequirement']}">
+            </div>
+        </div>
+        <div class="mt-3">
+            <button class="btn btn-primary" type="submit">Save</button>
+            <a class="btn btn-link" th:href="@{/food}">Cancel</a>
+        </div>
+    </form>
+</section>
+</body>
+</html>

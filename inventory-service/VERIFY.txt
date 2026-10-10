@@ -1,0 +1,12 @@
+inventory-service (port 8084, database inventory_db)
+
+PLACE: food-supply-nutrition\food-supply-nutrition\inventory-service  (next to beneficiary-service and the parent pom.xml)
+Import: File > Import > Existing Maven Projects, then Maven > Update Project (Force Update).
+Start food-nutrition-service on a FRESH food_db first (inventory seeds food item ids 1..32 in the same order).
+
+1. Start InventoryServiceApplication (stop any old run on 8084). Open http://localhost:8084/swagger-ui.html
+2. GET /api/v1/stock?size=50  -> 32 items; lowStock=true for Ragi, Toor Dal, Spinach, Egg, Groundnut Oil.
+   GET /api/v1/alerts/expiring?days=7 -> tomato, spinach, banana, milk, chicken batches. GET /api/v1/alerts/expired -> 1 curd batch.
+3. POST /api/v1/stock/reserve  {"referenceType":"TEST","referenceId":1,"items":[{"foodItemId":1,"requiredQuantity":100}]}
+   -> allocation from the earliest-expiry rice batch. Then POST /stock/release {"referenceType":"TEST","referenceId":1}.
+   Asking for 99999 kg -> HTTP 409 with a "shortages" list and nothing reserved.

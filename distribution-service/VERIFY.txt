@@ -1,0 +1,11 @@
+distribution-service (port 8085, DB distribution_db)
+1. Unzip so distribution-service\ sits next to beneficiary-service\ (inside the inner food-supply-nutrition folder). STS: Maven > Update Project (Force Update).
+2. Start order: beneficiary 8081, food-nutrition 8082, inventory 8084, procurement 8083, programme 8086, THEN distribution 8085.
+   Console: "Seeded 3 distribution centres" and "Seeded 3 historical distribution plans" (plans need programme-service running; otherwise they are retried on the next start).
+3. http://localhost:8085/swagger-ui.html
+   - GET /api/v1/distribution-centres (3), GET /api/v1/distribution-plans (3 historical), GET /api/v1/distribution-records?planId=1
+   - POST /api/v1/distribution-plans/generate {"programmeId":1,"centreId":1,"startDate":"<today>","endDate":"<today+6>"} -> items, shortages, expiringItems (nothing saved)
+   - POST /api/v1/distribution-plans/raise-procurement {"programmeId":1,"startDate":"<today>","endDate":"<today+6>"} -> creates a SHORTAGE request in procurement (SUBMITTED)
+   - POST /api/v1/distribution-plans (same body as generate) -> 409 with shortages until the shortage is received; then 201, status RESERVED with batch allocations
+   - POST /{id}/dispatch -> DISPATCHED; POST /{id}/deliver (empty body = delivered in full) -> DELIVERED; POST /{id}/cancel (only before dispatch)
+Tests: mvn test.
